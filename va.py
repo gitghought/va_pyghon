@@ -19,9 +19,8 @@ def getDev():
 
 		return res 
 
+def getProp():
+	(status,output)=commands.getstatusoutput(adbs + " getprop")
+	return output
 
-ret = getDev()
-#print ret
-
-for s in ret:
-	print s
+print "" + getProp()
