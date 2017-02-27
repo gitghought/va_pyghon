@@ -1,6 +1,7 @@
 import io
 import commands 
 import os
+import multiprocessing
 
 class Dev:
 
@@ -29,6 +30,9 @@ class Dev:
 
 	def getDevs(self):
 		headStr = "List of devices attached"
+
+		print ("begin dev->getDevs")
+
 		(status, output) = commands.getstatusoutput("adb devices")
 		output = output.strip("\n")
 		output = output.strip()
@@ -36,6 +40,8 @@ class Dev:
 		subStr = output[pos:]
 		subStr= subStr.strip()
 		subStr = subStr.strip("\n")
+
+		print ("before dev->getDevs")
 
 		if len(subStr)==0:
 			return "no devices"
@@ -55,13 +61,29 @@ class Dev:
 		else:
 			return 0
 
+	def connect_nothread(self, ip) :
+		global id_connectIP
+		cmdPreStr = "adb -s "
+		id_connectIP = os.getpid()
+		os.system("adb connect" + " " + ip)
+
+	# don't use no thread 
 	def connect (self) :
+		print ("begin connect")
+		i = 0
 		for ip in self.devIP :
-			print os.system("adb connect " + " " + ip)
+			pro = multiprocessing.Process(target=self.connect_nothread, args=(ip,))
+			pro.start()
+			pro.join(2)
+			pro.terminate()
+			pro.join()
 		
 	# return exectly ip 
 	def connDev(self, choice = 0) :
 		connStr = "adb -s "
+
+		print ("begin connDev")
+
 		devs = self.getDevs()
 		self.showDevs(devs)
 		#choice = selectDevFromDevs(devs)
