@@ -61,6 +61,10 @@ class Dev:
 		else:
 			return 0
 
+	def __disconnectAll (self) :
+		cmdStr = "adb disconnect"
+		os.system(cmdStr)
+
 	def connect_nothread(self, ip) :
 		global id_connectIP
 		cmdPreStr = "adb -s "
@@ -69,7 +73,8 @@ class Dev:
 
 	# don't use no thread 
 	def connect (self) :
-		print ("begin connect")
+		self.__disconnectAll()
+
 		i = 0
 		for ip in self.devIP :
 			pro = multiprocessing.Process(target=self.connect_nothread, args=(ip,))
