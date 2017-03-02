@@ -1,9 +1,18 @@
-#coding:utf-8
-
 import os
 import multiprocessing
 
 class SetProp :
+	def reboot_nothread(self):
+		cmdStr = "adb shell reboot"
+		os.system(cmdStr)
+
+	def reboot(self):
+		pro = multiprocessing.Process(target=self.reboot_nothread)
+		pro.start()
+		pro.join(1)
+		pro.terminate()
+		pro.join()
+
 	def reroot_nothread(self):
 		cmdStr = "adb root "
 		os.system(cmdStr)
@@ -58,4 +67,5 @@ if __name__ == "__main__":
 	propStr = prop.getProp("persist.sys.log.debug true")
 	prop.setProp(propStr)
 	prop.checkProp("persist.sys.log.debug")
+	prop.reboot()
 
