@@ -5,8 +5,8 @@ import os
 class Logcat:
 
 	def getLogcat(self, params=[]):
-		cmdStr = "adb shell logcat > aa.log".split(' ')
-		proADB= subprocess.Popen(args = cmdStr, shell=False)
+		cmdStr = "adb shell logcat > aa.log"
+		proADB= subprocess.Popen(args = cmdStr, shell=True)
 
 		return proADB
 
