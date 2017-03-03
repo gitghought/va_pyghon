@@ -2,113 +2,54 @@ import io
 import commands 
 import os
 import multiprocessing
+import re
+import sys
 
 class Dev:
 
-	devIP = ("192.168.1.116", "192.168.155.5")
-
-	def devSplit(self, dev) :
-		newDev=dev.split('\t')	
-		newDev.pop(1)
-
-		return str(newDev)
-
-	def devsSplit(self, devs):
-		devs = devs.split('\n')
-		new_devs = []
-		i = 0
-		for dev in devs:
-			new_devs.append(self.devSplit(dev))
-			i=i+1
-		
-		return new_devs
-
-	# haven't done yet
-	def confDev (self, fileName) :
-		io.open(fileName,'r')
-		print res
-
+	# 20170303 ok
 	def getDevs(self):
-		headStr = "List of devices attached"
-
-		print ("begin dev->getDevs")
-
-		(status, output) = commands.getstatusoutput("adb devices")
-		output = output.strip("\n")
-		output = output.strip()
-		pos = len(headStr)
-		subStr = output[pos:]
-		subStr= subStr.strip()
-		subStr = subStr.strip("\n")
-
-		print ("before dev->getDevs")
-
-		if len(subStr)==0:
-			return "no devices"
-		else:
-			return self.devsSplit(subStr)
-
-	def showDevs(self, devs) : 
-		i = 0
-		for dev in devs:
-			print "dev["+ str(i) +"]----->" + dev
-			i=i+1
-
-	def selectDevFromDevs(self, devs): 
-		if devs.__len__() >= 2:
-			val = input("you choice")
-			return val
-		else:
-			return 0
+		output = commands.getoutput("adb devices")
+		return self.__getIPFromStr(output)
 
 	def __disconnectAll (self) :
 		cmdStr = "adb disconnect"
 		os.system(cmdStr)
 
-	def connect_nothread(self, ip) :
-		global id_connectIP
-		cmdPreStr = "adb -s "
-		id_connectIP = os.getpid()
-		os.system("adb connect" + " " + ip)
 
-	# don't use no thread 
-	def connect (self) :
-		self.__disconnectAll()
+	def connect_nothread (self, ipaddr) :
+		cmdStr = "adb connect " + ipaddr[0]
+		os.system(cmdStr)
 
-		i = 0
-		for ip in self.devIP :
-			pro = multiprocessing.Process(target=self.connect_nothread, args=(ip,))
-			pro.start()
-			pro.join(2)
-			pro.terminate()
-			pro.join()
-		
-	# return exectly ip 
-	def connDev(self, choice = 0) :
-		connStr = "adb -s "
-
-		print ("begin connDev")
-
+	def connect (self, ipaddr) :
 		devs = self.getDevs()
-		self.showDevs(devs)
-		#choice = selectDevFromDevs(devs)
-	#:	print "choice = " + str(choice)
-		return devs[choice].lstrip('[').rstrip(']').lstrip('\'').rstrip('\'')
-		
+		if len(devs) > 0 :
+			self.__disconnectAll()
+
+		if len(ipaddr) == 0:
+			print "bad command : python <command> <ipaddress>"
+			exit()
+
+		pro = multiprocessing.Process(target=self.connect_nothread, args=(ipaddr,))
+		pro.start()
+		pro.join(2)
+		pro.terminate()
+		pro.join()
+
+	def __getIPFromStr(self, ipaddr):
+		reg = r'(?<![\.\d])(?:\d{1,3}\.){3}\d{1,3}(?:[\.\d])(?:[\:])(?:\d{4})'
+		s_ip = re.compile(reg, re.M)
+		ipList = re.findall(reg,ipaddr)
+		#print (ipList)
+		return ipList
 
 # just for test
 if __name__ == "__main__" :
-	#connect device
-	#connDEV()
+	dev = Dev()
 
-	# test getdev
-	#res = getDevs()
-	#print res.__len__()
-	#showDevs(res)
-	#choice = selectDevFromDevs(res)
-	
+	ipaddr = sys.argv[1:]
 
-#	confDev("devicelist.in")
-	dev = connDev()
-	print type(dev)
+	dev.connect(ipaddr)
 
+	devs = dev.getDevs()
+	print (devs)
