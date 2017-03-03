@@ -60,6 +60,7 @@ if __name__ == "__main__":
 	commandargs = sys.argv[1:] 
 	if len(commandargs) == 0:
 		print ("error: python <script> [path] [file]")
+		print ("for example : python vvv.py /system/app  OSlauncher.apk")
 		exit()
 
 	#print ("" + commandargs[0])
