@@ -2,60 +2,66 @@ import io
 import os
 import vb_get_dev
 import multiprocessing
+from vb_get_dev import Dev
 
-def propStrip(prop) :
-	return prop.strip()
+class GetProp : 
+	def __init__(this):
+		this.dev = Dev()
 
-def propSplit(props):
-	props = props.split('\n')
-	new_props = []
-	i = 0
-	for prop in props:
-		if prop.__len__() == 0:
-			continue
-		new_props.append(prop)
+	def propStrip(this, prop) :
+		return prop.strip()
 
-		i=i+1
-	
-	return new_props
+	def propSplit(this, props):
+		props = props.split('\n')
+		new_props = []
+		i = 0
+		for prop in props:
+			if prop.__len__() == 0:
+				continue
+			new_props.append(prop)
 
-def getPropFromCMD_nothread(fileName) :
+			i=i+1
+		
+		return new_props
 
-	global id_getprop
-	cmdPreStr = "adb -s "
+	def __getPropFromCMD_nothread(this, fileName) :
 
-	id_getprop = os.getpid()
+		global id_getprop
+		cmdPreStr = "adb -s "
 
-	dev = vb_get_dev.connDev()
-	cmdStr = cmdPreStr + str(dev) + " shell getprop  > " + fileName
+		id_getprop = os.getpid()
 
-	print cmdStr 
+		dev = this.dev.getDev()
+		cmdStr = cmdPreStr + dev[0] + " shell getprop  > " + fileName
 
-	os.system(cmdStr)
+		print cmdStr 
 
-def getPropFromCMDThread(fileName) :
-	pro = multiprocessing.Process(target=getPropFromCMD_nothread, args=(fileName,))
-	pro.start()
-	pro.join(2)
-	pro.terminate()
-	pro.join()
+		os.system(cmdStr)
+
+	def getProp(this, fileName) :
+		pro = multiprocessing.Process(target=this.__getPropFromCMD_nothread, args=(fileName,))
+		pro.start()
+		pro.join(2)
+		pro.terminate()
+		pro.join()
 
 
-def getPropfromFile(fileName) :
-	fp = io.open(fileName, 'r')
+	def getPropfromFile(this, fileName) :
+		fp = io.open(fileName, 'r')
 
-	try:
-		content = fp.read()
-		content.strip('\n')
-		content.strip()
-	finally:
-		fp.close()
+		try:
+			content = fp.read()
+			content.strip('\n')
+			content.strip()
+		finally:
+			fp.close()
 
-	return propSplit(content)
+		return propSplit(content)
 
-def showFileContent (props) :
-	for prop in props:
-		print prop
+	def showFileContent (this, props) :
+		for prop in props:
+			print prop
 
 if __name__ == "__main__" :
-	getPropFromCMDThread("prop.dest")
+	prop = GetProp()
+	prop.getProp("prop.dest")
