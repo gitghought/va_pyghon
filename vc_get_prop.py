@@ -10,24 +10,24 @@ from vb_get_dev import Dev
 
 class GetProp : 
 	__need_prop = [
-"ro.cantv.homebg",
-"ro.cantv.tv.inputcode",
-"ro.cantv.app.blacklist",
-"ro.build.version.channelid_l",
-"ro.umeng.channelid",
-"ro.umeng.appkey",
-"ro.product.model",
-"ro.product.class",
-"ro.build.version.channelid",
-"ro.product.manufacturer",
-"ro.build.version.release",
-"ro.build.date.ut"
+			"ro.cantv.homebg",
+			"ro.cantv.tv.inputcode",
+			"ro.cantv.app.blacklist",
+			"ro.build.version.channelid_l",
+			"ro.umeng.channelid",
+			"ro.umeng.appkey",
+			"ro.product.model",
+			"ro.product.class",
+			"ro.build.version.channelid",
+			"ro.product.manufacturer",
+			"ro.build.version.release",
+			"ro.build.date.ut"
 			]
 
 	def __init__(this, ip  = ""):
 		this.dev = Dev()
-#		this.ipaddr = this.dev.connect(ip)
-		this.ipaddr = this.dev.getDevs()
+		this.ipaddr = this.dev.connect(ip)
+#		this.ipaddr = this.dev.getDevs()
 		this.propSav = r".\PropSav.gh"
 
 	def propStrip(this, prop) :
@@ -53,8 +53,10 @@ class GetProp :
 		pro.kill()
 		pro.wait()
 
+	# return the property that you need
 	def getProp(this, fileName = "") :
 		this.__getPropFromCMD_nothread()
+		return this.getPropfromFile()
 
 	# 
 
@@ -66,7 +68,7 @@ class GetProp :
 		return False
 
 	# return a list
-	def myFilter(this, allContent) :
+	def __myFilter(this, allContent) :
 		filt = filter(this.__mFilter, allContent)
 		#print (filt)
 		#for f in filt :
@@ -99,7 +101,7 @@ class GetProp :
 
 		
 
-		return this.myFilter(new_props)
+		return this.__myFilter(new_props)
 
 
 	# para0 : should be a list
@@ -108,13 +110,16 @@ class GetProp :
 			print (prop)
 
 if __name__ == "__main__" :
-	ip = sys.argv[1:]
-	if len(ip) == 0:
+	#print (sys.argv[1:])
+	#print (type(sys.argv[1:]))
+	ipa = sys.argv[1:]
+	if len(sys.argv[1:]) == 0:
 		print ("bad command : python <command> <ipaddress>")
 		exit()
 
-	prop = GetProp()
-	#prop.getProp("prop.dest")
-	filt = prop.getPropfromFile()
+	prop = GetProp(ipa)
+	filt = prop.getProp("prop.dest")
+	#filt = prop.getPropfromFile()
+
 	prop.showFileContent(filt)
 
