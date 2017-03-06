@@ -21,7 +21,22 @@ class GetProp :
 			"ro.build.version.channelid",
 			"ro.product.manufacturer",
 			"ro.build.version.release",
-			"ro.build.date.ut"
+			"ro.build.date.utc"
+			]
+
+	__need_prop_ext = [
+			"ro.cantv.homebg",
+			"ro.cantv.tv.inputcode",
+			"ro.cantv.app.blacklist",
+			"ro.build.version.channelid_l",
+			"ro.umeng.channelid",
+			"ro.umeng.appkey",
+			"ro.product.model",
+			"ro.product.class",
+			"ro.build.version.channelid",
+			"ro.product.manufacturer",
+			"ro.build.version.release",
+			"ro.build.date.utc"
 			]
 
 	def __init__(this, ip  = ""):
