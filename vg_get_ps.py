@@ -1,37 +1,37 @@
+from util_str import UtilStr
+import sys
+import time
+import subprocess
 import io
 import os
-import vd_check_prop as Prop
+#import vd_check_prop as Prop
 import vb_get_dev as Dev
 import multiprocessing
+from vb_get_dev import Dev
 
 class PsCmd:
 	psResultFileName = ".ps.gh"
 	psResultList = []
 
-	def __init__(self) :
-		self.prop = Prop.Prop()
-		self.dev = Dev.Dev()
+	def __init__(self, ip):
+		#self.prop = Prop.Prop()
+		self.dev = Dev()
+		self.ip = self.dev.connect(ip)
 
-	def getPsCmd_nothread_danger (self, param = "") :
-		global id_get_ps
+	def __getPsCmd_nothread_danger (self, param = "") :
 		cmdPreStr = "adb -s "
+		cmdStr = cmdPreStr + self.ip + " shell ps" + " " + param # + " > " + self.psResultFileName
+		#os.system(cmdStr)
+		pro = subprocess.Popen(cmdStr, shell = False, stdout = open(self.psResultFileName, 'w'))
+		time.sleep(2)
+		pro.kill()
+		pro.wait()
 
-		id_getprop = os.getpid()
-
-		dev = self.dev.connDev()
-
-		cmdStr = cmdPreStr + str(dev) + " shell ps" + " " + param + " > " + self.psResultFileName
-
-		os.system(cmdStr)
 
 	def getPsCmdThread(self, param = "") :
-
-
-		pro = multiprocessing.Process(target=self.getPsCmd_nothread_danger, args=(param,))
-		pro.start()
-		pro.join(1)
-		pro.terminate()
-		pro.join()
+		self.__getPsCmd_nothread_danger(param)
+		return self.readFile()
+			
 
 	def psSplit(self, psses):
 		psses = psses.split('\n')
@@ -47,24 +47,22 @@ class PsCmd:
 		return new_ps
 
 	def readFile (self) :
+
 		fp = io.open(self.psResultFileName, 'r')
 
+		ncont = []
 		try:
-			content = fp.read()
-			content.strip('\n')
-			content.strip()
+			contents = fp.readlines()
+			ncont  = UtilStr.split_N(contents)	
+			
 		finally:
 			fp.close()
 
-		return self.psSplit(content)
+		return ncont
 		
-
-#	def psCheckPm(fp) :
-			
-		
-		
-
 if __name__ == "__main__":
-	ps = PsCmd()
-	ps.getPsCmdThread()
-	ps.readFile()
+	ipaddr = sys.argv[1:]
+
+	ps = PsCmd(ipaddr)
+	mlist = ps.getPsCmdThread()
+	UtilStr.show(mlist)
