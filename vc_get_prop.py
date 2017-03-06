@@ -1,12 +1,17 @@
 import io
+import sys
 import os
 import vb_get_dev
+import subprocess
+import time
 import multiprocessing
 from vb_get_dev import Dev
 
 class GetProp : 
-	def __init__(this):
+	def __init__(this, ip):
 		this.dev = Dev()
+		this.ipaddr = this.dev.connect(ip)
+		this.propSav = r".\PropSav.gh"
 
 	def propStrip(this, prop) :
 		return prop.strip()
@@ -24,27 +29,17 @@ class GetProp :
 		
 		return new_props
 
-	def __getPropFromCMD_nothread(this, fileName) :
-
-		global id_getprop
+	def __getPropFromCMD_nothread(this, fileName = "") :
 		cmdPreStr = "adb -s "
+		cmdStr = cmdPreStr + this.ipaddr + " shell getprop"
 
-		id_getprop = os.getpid()
+		pro = subprocess.Popen(cmdStr, shell = False, stdout = open(this.propSav, 'w'))
+		time.sleep(3)
+		pro.kill()
+		pro.wait()
 
-		dev = this.dev.getDev()
-		cmdStr = cmdPreStr + dev[0] + " shell getprop  > " + fileName
-
-		print cmdStr 
-
-		os.system(cmdStr)
-
-	def getProp(this, fileName) :
-		pro = multiprocessing.Process(target=this.__getPropFromCMD_nothread, args=(fileName,))
-		pro.start()
-		pro.join(2)
-		pro.terminate()
-		pro.join()
-
+	def getProp(this, fileName = "") :
+		this.__getPropFromCMD_nothread()
 
 	def getPropfromFile(this, fileName) :
 		fp = io.open(fileName, 'r')
@@ -60,8 +55,13 @@ class GetProp :
 
 	def showFileContent (this, props) :
 		for prop in props:
-			print prop
+			print (prop)
 
 if __name__ == "__main__" :
-	prop = GetProp()
+	ip = sys.argv[1:]
+	if len(ip) == 0:
+		print ("bad command : python <command> <ipaddress>")
+		exit()
+
+	prop = GetProp(ip)
 	prop.getProp("prop.dest")
