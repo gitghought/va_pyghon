@@ -5,7 +5,6 @@ import os
 import vb_get_dev
 import subprocess
 import time
-import multiprocessing
 from vb_get_dev import Dev
 
 class GetProp : 
