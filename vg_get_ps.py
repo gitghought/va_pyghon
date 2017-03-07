@@ -24,9 +24,9 @@ class PsCmd:
 
 		# initial the dictionary  begin
 		this.dics["exit"] = exit
-		this.dics["pm"] = this.isPmThread
-		this.dics["ota"] = this.isOTAService
-		this.dics["launcher"] = this.isLauncher
+		this.dics["pm"] = this.__isPmThread
+		this.dics["ota"] = this.__isOTAService
+		this.dics["launcher"] = this.__isLauncher
 
 		# initial end
 
@@ -57,7 +57,7 @@ class PsCmd:
 			fp.close()
 
 		return ncont
-	def isPmThread(this):
+	def __isPmThread(this):
 		#reg = ''
 		#this.__getPsCmdThread(r' pm')
 		#fp = open(this.psResultFileName, 'r')
@@ -68,22 +68,22 @@ class PsCmd:
 		else :
 			return False
 
-	def isOTAService(this):
+	def __isOTAService(this):
 		mlist = this.__getPsCmdThread(r'otaservice')
 		if len(mlist) > 0 :
 			return True
 		else :
 			return False
 
-	def isLauncher(this):
+	def __isLauncher(this):
 		mlist = this.__getPsCmdThread(r'launcher')
 		if len(mlist) > 0 :
 			return True
 		else :
 			return False
 
-	#dics = {"pm":this.isPmThread, "ota":"isOTAService", "launcher":"isLauncher", "exit":"exit"}
-	def getPosOfDictionary(this, pos) :
+	#dics = {"pm":this.isPmThread, "ota":"isOTAService", "launcher":"__isLauncher", "exit":"exit"}
+	def __getPosOfDictionary(this, pos) :
 		p = int(pos)
 		keys = this.dics.keys()
 		i = 0
@@ -91,16 +91,19 @@ class PsCmd:
 			if i == p:
 				return key
 			i+=1
+	def checkPS(self) :
+		pos = 0
+		#print (ps.dics["pm"]())
+		while True:
+			UtilStr.showDictitonary(ps.dics)
+			choice = input("you choice is : ")
+			print (ps.dics[ps.__getPosOfDictionary(choice)]())
+
+
 
 		
 if __name__ == "__main__":
 	ipaddr = sys.argv[1:]
 
 	ps = PsCmd(ipaddr)
-	pos = 0
-	#print (ps.dics["pm"]())
-	while True:
-		UtilStr.showDictitonary(ps.dics)
-		choice = input("you choice is : ")
-		print (ps.dics[ps.getPosOfDictionary(choice)]())
-
+	ps.checkPS()
