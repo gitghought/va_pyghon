@@ -15,15 +15,24 @@ class PsCmd:
 	psResultFileName = ".ps.gh"
 	psResultList = []
 
+	dics = {} # notice here
+
+
 	def __init__(this, ip):
-		#this.prop = Prop.Prop()
 		this.dev = Dev()
 		this.ip = this.dev.connect(ip)
+
+		# initial the dictionary  begin
+		this.dics["exit"] = exit
+		this.dics["pm"] = this.isPmThread
+		this.dics["ota"] = this.isOTAService
+		this.dics["launcher"] = this.isLauncher
+
+		# initial end
 
 	def __getPsCmd_nothread_danger (this, param = "") :
 		cmdPreStr = "adb -s "
 		cmdStr = cmdPreStr + this.ip + " shell ps" + " " + param # + " > " + this.psResultFileName
-		#os.system(cmdStr)
 		pro = subprocess.Popen(cmdStr, shell = False, stdout = open(this.psResultFileName, 'w'))
 		time.sleep(2)
 		pro.kill()
@@ -59,14 +68,39 @@ class PsCmd:
 		else :
 			return False
 
+	def isOTAService(this):
+		mlist = this.__getPsCmdThread(r'otaservice')
+		if len(mlist) > 0 :
+			return True
+		else :
+			return False
 
-		
+	def isLauncher(this):
+		mlist = this.__getPsCmdThread(r'launcher')
+		if len(mlist) > 0 :
+			return True
+		else :
+			return False
+
+	#dics = {"pm":this.isPmThread, "ota":"isOTAService", "launcher":"isLauncher", "exit":"exit"}
+	def getPosOfDictionary(this, pos) :
+		p = int(pos)
+		keys = this.dics.keys()
+		i = 0
+		for key in keys :
+			if i == p:
+				return key
+			i+=1
+
 		
 if __name__ == "__main__":
 	ipaddr = sys.argv[1:]
 
 	ps = PsCmd(ipaddr)
-	#mlist = ps.__getPsCmdThread()
-	#UtilStr.show(mlist)
-	print (ps.isPmThread())
+	pos = 0
+	#print (ps.dics["pm"]())
+	while True:
+		UtilStr.showDictitonary(ps.dics)
+		choice = input("you choice is : ")
+		print (ps.dics[ps.getPosOfDictionary(choice)]())
 
