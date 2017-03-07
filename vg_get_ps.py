@@ -95,7 +95,7 @@ class PsCmd:
 		pos = 0
 		#print (ps.dics["pm"]())
 		while True:
-			UtilStr.showDictitonary(ps.dics)
+			UtilStr.showDictitonary(this.dics)
 			choice = input("you choice is : ")
 			print (ps.dics[ps.__getPosOfDictionary(choice)]())
 
