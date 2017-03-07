@@ -1,71 +1,87 @@
+import sys
+from util_str import UtilStr
+import subprocess
+from vb_get_dev import Dev
 import os
+import time
 import multiprocessing
 
 class SetProp :
-	def reboot_nothread(self):
+	dics = {}
+
+	def __init__(this, ip):
+		this.dev = Dev()
+		this.dev.connect(ip)
+
+		# 
+		this.dics["exit"] = exit
+		this.dics["reroot"] = this.__reroot
+		this.dics["reboot"] = this.__reboot
+		this.dics["debugTrue"] = this.__debugTrue
+
+	def __reboot(this):
 		cmdStr = "adb shell reboot"
-		os.system(cmdStr)
+		pro = subprocess.Popen(cmdStr, shell = False)
+		time.sleep(1)
+		pro.kill()
+		pro.wait()
 
-	def reboot(self):
-		pro = multiprocessing.Process(target=self.reboot_nothread)
-		pro.start()
-		pro.join(1)
-		pro.terminate()
-		pro.join()
-
-	def reroot_nothread(self):
+	def __reroot(this):
 		cmdStr = "adb root "
-		os.system(cmdStr)
 
-	def reroot(self):
-		pro = multiprocessing.Process(target=self.reroot_nothread)
-		pro.start()
-		pro.join(2)
-		pro.terminate()
-		pro.join()
+		pro = subprocess.Popen(cmdStr, shell = False)
+		time.sleep(1)
+		pro.kill()
+		pro.wait()
 
-	def getProp(self, propStrs):
+	def __getProp(this, propStrs):
 		newCmd=''
 		for prop in propStrs:
 			newCmd += prop
 
 		return newCmd
+	def __listToStr(this, cmdList) :
+		newCmd = ""
+		for cmd in cmdList:
+			newCmd += cmd
 
-	def setProp(self, propStr):
-		cmdStr = "adb shell setprop "
-		os.system(cmdStr + propStr)
+		return newCmd
 
-	def checkProp(self, propStr):
-		cmdStr = "adb shell getprop | grep "
-		os.system(cmdStr + propStr)
-	
-	def enableSet():
-		cmdStr = "adb shell reboot"
+	def __setProp(this, cmdStr):
+		print (cmdStr)
+		nCmd = this.__listToStr(cmdStr)
+		print (nCmd)
+		pro = subprocess.Popen(nCmd, shell = False)
+		time.sleep(1)
+		pro.kill()
+		pro.wait()
 
-	def connectDev_noThread(self, ipAddr):
-		os.system("adb connect " + ipAddr)
+	def __getPosOfDictionary(this, pos) :
+		p = int(pos)
+		keys = this.dics.keys()
+		i = 0
+		for key in keys :
+			if i == p:
+				return key
+			i+=1
+	def __debugTrue(this):
+		cmdStr = "adb shell setprop persist.sys.log.debug true"
 
-	def connectDev(self, ipAddr):
-		pro = multiprocessing.Process(target=connectDev_noThread, args=(ipAddr,))
-		pro.start()
-		pro.join(2)
-		pro.terminate()
-		pro.join()
-		
+		pro = subprocess.Popen(cmdStr, shell = False)
+		time.sleep(1)
+		pro.kill()
+		pro.wait()
 
+	def setProp(this) :
+		pos = 0
+
+		while True:
+			UtilStr.showDictitonary(this.dics)
+			choice = input("you choice is : ")
+			this.dics[this.__getPosOfDictionary(choice)]()
 
 if __name__ == "__main__":
-	prop = SetProp()
+	ipAddr = sys.argv[1:]
 
-	ipAddr = input("enter ip address :")
-	prop.connectDev_noThread(ipAddr)
-
-	prop.reroot()
-
-	os.system("adb connect " + ipAddr)
-
-	propStr = prop.getProp("persist.sys.log.debug true")
-	prop.setProp(propStr)
-	prop.checkProp("persist.sys.log.debug")
-	prop.reboot()
-
+	prop = SetProp(ipAddr)
+	prop.setProp()
