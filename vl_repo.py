@@ -1,3 +1,4 @@
+import re
 import os
 import time
 import subprocess
@@ -6,7 +7,10 @@ import sys
 
 class Repo :
 	dics = {}
-
+	priv_dics = {}
+	
+	branchFile = "branch.gh"
+	
 	repoPath = "/home/gaihao/b_h2_allwinner/"
 	repoAllwinner = "/home/gaihao/b_h2_allwinner/Allwinner-h2"
 	repolichee = "/home/gaihao/b_h2_allwinner/Allwinner-h2"
@@ -14,40 +18,45 @@ class Repo :
 		this.dics["exit"] = exit
 		this.dics["currentBranch"] = this.__repoCurrentBranch
 		this.dics["switchBranch"] = this.__repoSwitchBranch
+
+		this.priv_dics["readfile"] = this.__readFile
 	
 	def __repoSwitchBranch(this):
 		print (os.getcwd())
+		print ("oldpath = " + this.oldPath)
 		
 	def __repoCurrentBranch(this):
-		oldPath = os.getcwd()
-		#cmdStr = "repo forall -c 'git branch -a'"
-		#cmdStr = "ls"
-		#pro = subprocess.Popen(cmdStr, shell = False)
-		#time.sleep(1)
-		#pro.kill()
-		#pro.wait()
-		print (this.repoPath)
-		print (os.getcwd())
+		# currentpath
+		this.oldPath = os.getcwd()
 
+		# distpath
+		os.chdir(this.repoPath)
+		newPath = os.getcwd()
 
-		return "good"
+		cmdRepo = "repo forall -c "
+		cmdGit = "git branch -a"
+		cmdStr =  cmdRepo + "\"" + cmdGit + "\""
 
-	def __getPosOfDictionary(this, pos) :
-		p = int(pos)
-		keys = this.dics.keys()
-		i = 0
-		for key in keys :
-			if i == p:
-				return key
-			i+=1
+		pro = subprocess.Popen(cmdStr, shell = True, stdout = open(this.branchFile, 'w'))
+		pro.wait()
+
+		# get current branch string
+		curBran = this.__readFileToGetCurrentBranch()
+
+		return curBran
+
+	def __readFileToGetCurrentBranch (this):
+		fp = open(this.branchFile, 'r')
+		str = fp.read()
+		#print (str)
+		# create a reg to filter the current branch
+		reg = r'^\*.*'
+		starStart = re.compile(reg, re.M)
+		ll = starStart.findall(str)
+		return ll[0]
+	
 	def select(this) :
-		pos = 0
-		#print (this.dics["pm"]())
-		while True:
-			UtilStr.showDictitonary(this.dics)
-			choice = input("you choice is : ")
-			print (this.dics[this.__getPosOfDictionary(choice)]())
-
+		UtilStr.operations(this.dics)
 
 if __name__ == "__main__":
 	repo = Repo()
