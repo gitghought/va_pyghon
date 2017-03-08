@@ -1,4 +1,5 @@
 #coding=utf-8
+from util_str import UtilStr
 import platform
 import os.path
 import time
@@ -12,10 +13,18 @@ import sys
 class Dev:
 	devsFile = r".\devs.gh"
 
+	dics = {}
+	def __init__(this):
+		this.dics["connect"] = this.__connect
+		this.dics["back"] = this.__back
+
 	def __isWindows(self):
 		return "Window" in platform.system()
 	def __isLinux(self):
 		return "Linux" in platform.system()
+
+	def __back(this) :
+		UtilStr.flag = 1
 
 	# return list
 	def __getDevsFromFile(self):
@@ -40,7 +49,15 @@ class Dev:
 		cmdStr = "adb connect " + ipaddr[0]
 		os.system(cmdStr)
 
+	def __connect(this) :
+		ipaddr = []
+
+		ipaddress = input("enter ip address : ")
+		ipaddr.append(ipaddress)
+		this.connect(ipaddr)
+
 	# return string of the ip address include the port
+	# param1:should be a list
 	def connect (self, ipaddr) :
 		devs = self.getDevs()
 		if len(devs) > 0 :
@@ -68,13 +85,12 @@ class Dev:
 		s_ip = re.compile(reg, re.M)
 		ipList = re.findall(reg,ipaddr)
 		return ipList
+	def ops(this):
+		UtilStr.operations(this.dics)
+
 
 # just for test
 if __name__ == "__main__" :
 	dev = Dev()
-
-	ipaddr = sys.argv[1:]
-
-	ip = dev.connect(ipaddr)
-	print ("ip = " + ip)
+	dev.ops()
 
