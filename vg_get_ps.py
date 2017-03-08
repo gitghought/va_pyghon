@@ -91,13 +91,13 @@ class PsCmd:
 			if i == p:
 				return key
 			i+=1
-	def checkPS(self) :
+	def checkPS(this) :
 		pos = 0
-		#print (ps.dics["pm"]())
+		#print (this.dics["pm"]())
 		while True:
 			UtilStr.showDictitonary(this.dics)
 			choice = input("you choice is : ")
-			print (ps.dics[ps.__getPosOfDictionary(choice)]())
+			print (this.dics[this.__getPosOfDictionary(choice)]())
 
 
 
