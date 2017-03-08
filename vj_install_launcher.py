@@ -1,83 +1,73 @@
+from util_str import UtilStr
+import subprocess
 import multiprocessing
 import sys
 import os
 
 class InstallLauncher:
-	def __installLauncher_nothread(self, filename) :
+
+
+	def __installLauncher_nothread(this, filename) :
 		cmdStr = "adb push " + filename[1] + " " + filename[0]
 		os.system("adb shell rm " + filename[0] + "/" + "OSLauncher*")
 		os.system(cmdStr)
 
-	def installLauncher(self, filename):
-		pro = multiprocessing.Process(target=self.__installLauncher_nothread(filename))
+	def installLauncher(this, filename):
+		pro = multiprocessing.Process(target=this.__installLauncher_nothread(filename))
 		pro.start()
 		pro.join(5)
 		pro.terminate()
 		pro.join()
 
-	def isFileExist(self, filename):
+	def isFileExist(this, filename):
 		if os.path.isfile(filename):
 			return os.path.exists(filename)	
 
 
-	def __remount_nothread(self):
+	def __remount_nothread(this):
 		cmdStr = "adb shell mount -o rw,remount /system"
 		os.system(cmdStr)
 
-	def remount(self):
-		pro = multiprocessing.Process(target=self.__remount_nothread())
+	def remount(this):
+		pro = multiprocessing.Process(target=this.__remount_nothread())
 		pro.start()
 		pro.join(2)
 		pro.terminate()
 		pro.join()
 
 
-	def __reroot_nothread(self):
+	def __reroot_nothread(this):
 		cmdStr = "adb root "
 		os.system(cmdStr)
 
-	def reroot(self):
-		pro = multiprocessing.Process(target=self.__reroot_nothread())
+	def reroot(this):
+		pro = multiprocessing.Process(target=this.__reroot_nothread())
 		pro.start()
 		pro.join(2)
 		pro.terminate()
 		pro.join()
 
 
-	def __connectDev_noThread(self, ipAddr):
+	def __connectDev_noThread(this, ipAddr):
 		os.system("adb connect " + ipAddr)
 
-	def connectDev(self, ipAddr):
-		pro = multiprocessing.Process(target=self.__connectDev_noThread(ipAddr))
+	def connectDev(this, ipAddr):
+		pro = multiprocessing.Process(target=this.__connectDev_noThread(ipAddr))
 		pro.start()
 		pro.join(2)
 		pro.terminate()
 		pro.join()
+
+	# should connect the device first
+	def findOldLauncher(this):
+		cmdStr = "adb shell find /system -name OS*.apk"
+		pro = subprocess.Popen(cmdStr, shell = False, stdout = subprocess.PIPE)
+		pro.wait()
+		pathList = pro.stdout.readlines()
+		launchers = UtilStr.byteToStr(pathList)
+		print (launchers)
 
 if __name__ == "__main__":
 	ins = InstallLauncher()	
+	ins.findOldLauncher()
 
-	commandargs = sys.argv[1:] 
-	if len(commandargs) == 0:
-		print ("error: python <script> [path] [file]")
-		print ("for example : python vvv.py /system/app  OSlauncher.apk")
-		exit()
-
-	#print ("" + commandargs[0])
-	#print ("" + commandargs[1])
-	#args = "".join(commandargs)
-
-	#print (ins.isFileExist(args))
-
-
-	ipAddr = input("enter ip address :")
-	ins.connectDev(ipAddr)
-
-	ins.reroot()
-
-	ins.connectDev(ipAddr)
-
-
-	ins.remount()
-
-	ins.installLauncher(commandargs)

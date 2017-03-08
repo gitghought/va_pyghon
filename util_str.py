@@ -3,6 +3,14 @@ import re
 class UtilStr:
 
 	@classmethod
+	def byteToStr (cls, mlist):
+		ll = []
+		for l in mlist:
+			ll.append(l.decode(encoding = 'utf-8'))
+
+		return ll
+
+	@classmethod
 	def split_N(cls, mlist):
 		reg = r'[\n]'
 		regS = re.compile(reg)
