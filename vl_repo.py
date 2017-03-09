@@ -17,18 +17,39 @@ class Repo :
 
 	def __init__(this):
 		this.dics["exit"] = exit
-		this.dics["currentBranch"] = this.__repoCurrentBranch
-		this.dics["switchBranch"] = this.__repoSwitchBranch
-		this.dics["localBranch"] = this.__readFileToGetLocalBranch
+		this.dics["getCurrentBranch"] = this.__repoCurrentBranch
+		this.dics["switchLocalBranch"] = this.__repoSwitchLocalBranch
+		this.dics["switchRemoteBranch"] = this.__repoSwitchToRemoteBranch
+		this.dics["getlocalBranch"] = this.__readFileToGetLocalBranch
 		this.dics["updateBranch"] = this.__repoUpdateBranch
 		this.dics["remoteBranch"] = this.__readFileToGetRemoteBranch
 		this.dics["getAllBranch"] = this.__repoGetAllBranchToFile
+		this.dics["deleteLocalBranch"] = this.__repoDeleteLocalBranch
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
 	def __exeInProcessWait(this, cmdStr):
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
+
+	def __repoDeleteLocalBranch(this):
+		# get current branch
+		localBranchs = this.__readFileToGetLocalBranch()
+		UtilStr.show(localBranchs)
+
+		choice = input("which Branch you want to Delete : ")
+		branch = localBranchs[int(choice)]
+
+		cmdRepo = "repo forall -c "
+		cmdGit = "git branch -D " + branch
+		cmdStr =  cmdRepo + "\"" + cmdGit + "\""
+
+		prop = subprocess.Popen(cmdStr, shell = True)
+		prop.wait()
+
+		# get all local branch
+
+		# delete the branch in local except the current branch
 
 	def __repoUpdateBranch(this):
 		cmdStr = "git pull"
@@ -40,7 +61,7 @@ class Repo :
 		this.__changeToDistPathWithParam(this.repolichee)
 		this.__exeInProcessWait(cmdStr)
 
-	def __repoSwitchBranch(this):
+	def __repoSwitchLocalBranch(this):
 		localBranch = this.__readFileToGetLocalBranch()
 		UtilStr.show(localBranch)
 		choice = input("which branch you want to switch : ")
@@ -69,6 +90,20 @@ class Repo :
 
 		return newPath
 
+	def __repoSwitchToRemoteBranch(this) :
+		this.__changeToDistPathWithParam(this.repoPath)
+		branchs = this.__readFileToGetRemoteBranch()
+		UtilStr.show(branchs)
+		sChoice = input("which branch you want :")
+		branch = branchs[int(sChoice)]
+
+		# execute the command
+		cmdRepo = "repo forall -c "
+		cmdGit = "git co -t " + branch
+		cmdStr =  cmdRepo + "\"" + cmdGit + "\""
+		prop = subprocess.Popen(cmdStr, shell = True)
+		prop.wait()
+
 	def __repoGetAllBranchToFile(this):
 		this.__changeToDistPath()
 
@@ -88,19 +123,26 @@ class Repo :
 		# get current branch string
 		this.curBran = this.__readFileToGetCurrentBranch()
 		#print(this.curBran)
-		UtilStr.show(this.curBran)
+		#UtilStr.show(this.curBran)
 
 		return this.curBran
 
 	def __readFileToGetCurrentBranch (this):
+		# update the file
+		this.__repoGetAllBranchToFile()
+
 		fp = open(this.branchFile, 'r')
 		str = fp.read()
+
 		# create a reg to filter the current branch
 		reg = r'^\*.*'
 		starStart = re.compile(reg, re.M)
 		ll = starStart.findall(str)
 		#list1=sorted(set(ll),key=ll.index) 
-		return this.__removeRepeated(ll)
+		currentBranch = this.__removeRepeated(ll)
+		UtilStr.show(currentBranch)
+
+		return currentBranch
 
 	# return remote branch into a list
 	def __readFileToGetRemoteBranch(this) :
@@ -128,7 +170,7 @@ class Repo :
 
 	def __removeRepeated(this, oldList):
 		list1=sorted(set(oldList),key=oldList.index) 
-		UtilStr.show(list1)
+		#UtilStr.show(list1)
 		return list1
 	
 	def select(this) :
