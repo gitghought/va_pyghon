@@ -25,8 +25,16 @@ class Repo :
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
 	
 	def __repoSwitchBranch(this):
-		print (os.getcwd())
-		print ("oldpath = " + this.oldPath)
+		localBranch = this.__readFileToGetLocalBranch()
+		UtilStr.show(localBranch)
+		choice = input("which branch you want to switch : ")
+		branchName = localBranch[int(choice)]
+		#print (branchName)
+		cmdStr = 'repo forall -c git co ' + branchName 
+		#print (cmdStr)
+		pro = subprocess.Popen(cmdStr, shell = True)
+		pro.wait()
+
 
 	""" read all local branch to list"""
 	def __repoLocalBranch(this):
@@ -58,6 +66,8 @@ class Repo :
 
 		# get current branch string
 		this.curBran = this.__readFileToGetCurrentBranch()
+		#print(this.curBran)
+		UtilStr.show(this.curBran)
 
 		return this.curBran
 
@@ -68,7 +78,8 @@ class Repo :
 		reg = r'^\*.*'
 		starStart = re.compile(reg, re.M)
 		ll = starStart.findall(str)
-		return ll[0]
+		list1=sorted(set(ll),key=ll.index) 
+		return list1
 
 	# return local branch into a list
 	def __readFileToGetLocalBranch(this):
