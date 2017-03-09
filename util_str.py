@@ -43,7 +43,7 @@ class UtilStr:
 		i = 0
 		print ("##############################")
 		for key in keys :
-			print (""+str(i) + " : " + "%-10s" %"" + key.rjust(10, ' '))
+			print (""+str(i) + " : " + "%-10s" %"" + key.rjust(4, ' '))
 			i += 1
 		print ("##############################")
 
