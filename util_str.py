@@ -31,8 +31,10 @@ class UtilStr:
 
 	@classmethod
 	def show(cls, mlist) :
+		i = 0
 		for cont in mlist:
-			print (cont)
+			print ("" + str(i) + " : " + cont)
+			i+=1
 
 	#show Dictionary all keys
 	@classmethod
@@ -69,7 +71,8 @@ class UtilStr:
 				break
 			UtilStr.showDictitonary(dics)
 			choice = input("you choice is : ")
-			print (dics[cls.__getPosOfDictionary(dics, choice)]())
+			#print (dics[cls.__getPosOfDictionary(dics, choice)]())
+			dics[cls.__getPosOfDictionary(dics, choice)]()
 
 if __name__ == "__main__":
 	#UtilStr.split_N("")
