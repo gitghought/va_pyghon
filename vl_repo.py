@@ -25,17 +25,33 @@ class Repo :
 		this.dics["remoteBranch"] = this.__readFileToGetRemoteBranch
 		this.dics["getAllBranch"] = this.__repoGetAllBranchToFile
 		this.dics["deleteLocalBranch"] = this.__repoDeleteLocalBranch
+		this.dics["createLocalBranch"] = this.__repoCreateLocalBranch
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
+
 	def __exeInProcessWait(this, cmdStr):
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
 
+	def __repoCreateLocalBranch(this):
+		this.__changeToDistPathWithParam(this.repoPath)
+
+		branch = raw_input("what is the name of the new branch : ")
+
+		cmdRepo = "repo forall -c "
+		cmdGit = "git co -b " + branch
+		cmdStr =  cmdRepo + "\"" + cmdGit + "\""
+
+		this.__exeInProcessWait(cmdStr)
+
+		# update the cache file ,because the current branch has changed
+		this.__repoGetAllBranchToFile()
+
 	def __repoDeleteLocalBranch(this):
 		# get current branch
 		localBranchs = this.__readFileToGetLocalBranch()
-		UtilStr.show(localBranchs)
+		#UtilStr.show(localBranchs)
 
 		choice = input("which Branch you want to Delete : ")
 		branch = localBranchs[int(choice)]
@@ -46,10 +62,6 @@ class Repo :
 
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
-
-		# get all local branch
-
-		# delete the branch in local except the current branch
 
 	def __repoUpdateBranch(this):
 		cmdStr = "git pull"
@@ -63,7 +75,7 @@ class Repo :
 
 	def __repoSwitchLocalBranch(this):
 		localBranch = this.__readFileToGetLocalBranch()
-		UtilStr.show(localBranch)
+		#UtilStr.show(localBranch)
 		choice = input("which branch you want to switch : ")
 		branchName = localBranch[int(choice)]
 		#print (branchName)
@@ -129,7 +141,7 @@ class Repo :
 
 	def __readFileToGetCurrentBranch (this):
 		# update the file
-		this.__repoGetAllBranchToFile()
+		#this.__repoGetAllBranchToFile()
 
 		fp = open(this.branchFile, 'r')
 		str = fp.read()
@@ -161,12 +173,19 @@ class Repo :
 		# change current path to distenation
 		this.__changeToDistPath()
 		fp = open(this.branchFile, 'r')
-		str = fp.read()
-		reg = r'^[ ]{0,}(?!.*remote.*).*'
-		starStart = re.compile(reg, re.M)
-		ll = starStart.findall(str)
 
-		return this.__removeRepeated(ll)
+		# notice here
+		cont = fp.read().strip('\n')
+
+		print (cont)
+		#reg = r'^[ ]{0,}(?!.*remote.*).*'
+		reg = r'^[ \*]{0,}(?!.*remote.*).*'
+		starStart = re.compile(reg, re.M)
+		ll = starStart.findall(cont)
+
+		localBranchs = this.__removeRepeated(ll)
+		UtilStr.show(localBranchs)
+		return localBranchs
 
 	def __removeRepeated(this, oldList):
 		list1=sorted(set(oldList),key=oldList.index) 
