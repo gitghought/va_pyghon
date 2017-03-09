@@ -11,9 +11,9 @@ class Repo :
 	
 	branchFile = "branch.gh"
 	
-	repoPath = "/home/gaihao/b_h2_allwinner/"   
-	repoAllwinner = "/home/gaihao/b_h2_allwinner/Allwinner-h2"   
-	repolichee = "/home/gaihao/b_h2_allwinner/lichee"   
+	repoPath = "/home/gaihao/b_allwinner_h2"
+	repoAllwinner = "/home/gaihao/b_allwinner_h2/Allwinner-h2"   
+	repolichee = "/home/gaihao/b_allwinner_h2/lichee"   
 
 	def __init__(this):
 		this.dics["exit"] = exit
@@ -21,6 +21,8 @@ class Repo :
 		this.dics["switchBranch"] = this.__repoSwitchBranch
 		this.dics["localBranch"] = this.__readFileToGetLocalBranch
 		this.dics["updateBranch"] = this.__repoUpdateBranch
+		this.dics["remoteBranch"] = this.__readFileToGetRemoteBranch
+		this.dics["getAllBranch"] = this.__repoGetAllBranchToFile
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
@@ -97,8 +99,20 @@ class Repo :
 		reg = r'^\*.*'
 		starStart = re.compile(reg, re.M)
 		ll = starStart.findall(str)
-		list1=sorted(set(ll),key=ll.index) 
-		return list1
+		#list1=sorted(set(ll),key=ll.index) 
+		return this.__removeRepeated(ll)
+
+	# return remote branch into a list
+	def __readFileToGetRemoteBranch(this) :
+		# change current path to distenation
+		this.__changeToDistPath()
+		fp = open(this.branchFile, 'r')
+		str = fp.read()
+		reg = r'^[ ]{0,}.*remote.*'
+		starStart = re.compile(reg, re.M)
+		ll = starStart.findall(str)
+
+		return this.__removeRepeated(ll)
 
 	# return local branch into a list
 	def __readFileToGetLocalBranch(this):
@@ -110,7 +124,10 @@ class Repo :
 		starStart = re.compile(reg, re.M)
 		ll = starStart.findall(str)
 
-		list1=sorted(set(ll),key=ll.index) 
+		return this.__removeRepeated(ll)
+
+	def __removeRepeated(this, oldList):
+		list1=sorted(set(oldList),key=oldList.index) 
 		UtilStr.show(list1)
 		return list1
 	
