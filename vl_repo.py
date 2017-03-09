@@ -11,19 +11,33 @@ class Repo :
 	
 	branchFile = "branch.gh"
 	
-	repoPath = "/home/gaihao/b_h2_allwinner/"
-	repoAllwinner = "/home/gaihao/b_h2_allwinner/Allwinner-h2"
-	repolichee = "/home/gaihao/b_h2_allwinner/Allwinner-h2"
+	repoPath = "/home/gaihao/b_h2_allwinner/"   
+	repoAllwinner = "/home/gaihao/b_h2_allwinner/Allwinner-h2"   
+	repolichee = "/home/gaihao/b_h2_allwinner/lichee"   
 
 	def __init__(this):
 		this.dics["exit"] = exit
 		this.dics["currentBranch"] = this.__repoCurrentBranch
 		this.dics["switchBranch"] = this.__repoSwitchBranch
 		this.dics["localBranch"] = this.__readFileToGetLocalBranch
+		this.dics["updateBranch"] = this.__repoUpdateBranch
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
-	
+	def __exeInProcessWait(this, cmdStr):
+		prop = subprocess.Popen(cmdStr, shell = True)
+		prop.wait()
+
+	def __repoUpdateBranch(this):
+		cmdStr = "git pull"
+		# update Allwinner-h2
+		this.__changeToDistPathWithParam(this.repoAllwinner)
+		this.__exeInProcessWait(cmdStr)
+
+		# update lichee
+		this.__changeToDistPathWithParam(this.repolichee)
+		this.__exeInProcessWait(cmdStr)
+
 	def __repoSwitchBranch(this):
 		localBranch = this.__readFileToGetLocalBranch()
 		UtilStr.show(localBranch)
@@ -42,6 +56,11 @@ class Repo :
 	
 		pass
 
+	def __changeToDistPathWithParam (this, path) :
+		os.chdir(path)
+		newPath = os.getcwd()
+
+		return newPath
 	def __changeToDistPath (this):
 		os.chdir(this.repoPath)
 		newPath = os.getcwd()
