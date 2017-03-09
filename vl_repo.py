@@ -8,6 +8,7 @@ import sys
 class Repo :
 	dics = {}
 	priv_dics = {}
+	dics_remote_name = {"h2-allwinner":"allwinner-h2"}
 	
 	branchFile = "branch.gh"
 	
@@ -16,6 +17,7 @@ class Repo :
 	repolichee = "/home/gaihao/b_allwinner_h2/lichee"   
 
 	def __init__(this):
+
 		this.dics["exit"] = exit
 		this.dics["getCurrentBranch"] = this.__repoCurrentBranch
 		this.dics["switchLocalBranch"] = this.__repoSwitchLocalBranch
@@ -26,6 +28,7 @@ class Repo :
 		this.dics["getAllBranch"] = this.__repoGetAllBranchToFile
 		this.dics["deleteLocalBranch"] = this.__repoDeleteLocalBranch
 		this.dics["createLocalBranch"] = this.__repoCreateLocalBranch
+		this.dics["pushLocalBranchToRemote"] = this.__repoPushLocalBranchToRemote
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
@@ -33,6 +36,31 @@ class Repo :
 	def __exeInProcessWait(this, cmdStr):
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
+
+	def __repoPushLocalBranchToRemote(this):
+		this.__changeToDistPathWithParam(this.repoPath)
+		
+		UtilStr.showDictitonary(this.dics_remote_name)
+		choice = input("which remote you want : ")
+		keys = this.dics_remote_name.keys()
+#		print (type(keys))
+
+# get cmdStr
+
+		currentBranch = this.__repoCurrentBranch()
+		reg = r'\w{1,}'
+		res = re.compile(reg)
+		cb = res.findall(currentBranch[0])
+		#print (cb)
+
+			
+		remoteBranchName = keys[0]
+		cmdRepo = "repo forall -c "
+		cmdGit = "git push -b " + remoteBranchName + " " + str(cb[0])
+		cmdStr =  cmdRepo + "\"" + cmdGit + "\""
+
+		print (cmdStr)
+
 
 	def __repoCreateLocalBranch(this):
 		this.__changeToDistPathWithParam(this.repoPath)
@@ -89,8 +117,6 @@ class Repo :
 	def __repoLocalBranch(this):
 		this.__repoGetAllBranchToFile()
 	
-		pass
-
 	def __changeToDistPathWithParam (this, path) :
 		os.chdir(path)
 		newPath = os.getcwd()
