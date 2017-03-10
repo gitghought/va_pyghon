@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 from util_str import UtilStr
 import subprocess
