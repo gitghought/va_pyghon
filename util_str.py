@@ -36,6 +36,22 @@ class UtilStr:
 			print ("" + str(i) + " : " + cont)
 			i+=1
 
+	#@classmethod
+	#def showDictitonaryKeyValue(cls, mDict) :
+	#	keys = mDict.keys()
+	#	vals = mDict.itervalues()
+
+	#	le = len(mDict)
+
+	#	i = 0
+	#	while True :
+	#		if i >= le:
+	#			break
+	#		print ("" +str(i).rjust(3, ' ') + " : " + "%-10s" %"" + keys[i].rjust(4, ' ') + "%-10s" %"" + vals[i].rjust(4,' '))
+	#		i+=1
+
+	#	print ("##############################")
+
 	#show Dictionary all keys
 	@classmethod
 	def showDictitonary(cls, mDict) :
@@ -78,6 +94,6 @@ if __name__ == "__main__":
 	#UtilStr.split_N("")
 #	UtilStr.show(["vvv", "vvv"])
 	dics = {"a":"a", "b":"b"}
-	#UtilStr.showDictitonary(disc)
-	UtilStr.operations(dics)
+#	UtilStr.showDictitonaryKeyValue(dics)
+	#$UtilStr.operations(dics)
 
