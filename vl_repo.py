@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import os
 import time
@@ -15,6 +16,7 @@ class Repo :
 	repoPath = "/home/gaihao/b_allwinner_h2"
 	repoAllwinner = "/home/gaihao/b_allwinner_h2/Allwinner-h2"   
 	repolichee = "/home/gaihao/b_allwinner_h2/lichee"   
+	repoManifest = "/home/gaihao/b_allwinner_h2/.repo/manifests"
 
 	def __init__(this):
 
@@ -29,13 +31,75 @@ class Repo :
 		this.dics["deleteLocalBranch"] = this.__repoDeleteLocalBranch
 		this.dics["createLocalBranch"] = this.__repoCreateLocalBranch
 		this.dics["pushLocalBranchToRemote"] = this.__repoPushLocalBranchToRemote
+		this.dics["modifyManifest"] = this.__repoModifyDefault
+		this.dics["gitAdd"] = this.__gitAdd
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
 
 	def __exeInProcessWait(this, cmdStr):
-		prop = subprocess.Popen(cmdStr, shell = True)
+		prop = subprocess.Popen(cmdStr, shell = True, stdout = subprocess.PIPE)
 		prop.wait()
+		#print (prop.stdout.read())
+		return prop
+
+	def __gitAdd(this):
+		# 改变路径
+
+		#cmdRepo = "repo forall -c "
+		#cmdGit = "git push -b " + remoteBranchName + " " + str(cb[0])
+		cmdStr =  "git status"
+		prop = this.__exeInProcessWait(cmdStr)
+		s = prop.stdout.read()
+		print (s)
+		ss = unicode(s,'utf8')
+
+		# 过滤出 git status 输出结果中需要使用的字符串:包含中文
+		#lDics = {}
+		### 用于过滤出当前文件的状态:修改|删除
+		#regKey = u'\t[\u2e80-\u9fff]{2,2}:'
+		#resKey = re.compile(regKey)
+		#sKey = resKey.findall(ss)
+		#keyList = this.__gitGetAddList(sKey)
+
+		reg = u'[\u2e80-\u9fff]{2,}:[ ]{1,}.*'
+		res = re.compile(reg, re.M)
+		ssl = res.findall(ss)
+		valList = this.__gitGetAddList(ssl)
+		UtilStr.show(valList)
+
+		## 过滤出修改后的文件名
+		reg = u'[\u2e80-\u9fff]{2,}:[ ]{1,}(.*)'
+		res = re.compile(reg, re.M)
+		ssl = res.findall(ss)
+		valList = this.__gitGetAddList(ssl)
+
+		choice = input ("which one you want to add : ")
+		fileName = valList[choice]
+		print ("your choice is : " + fileName)
+
+
+	# 显示转码后的字符串列表
+	# 返回转码后的列表
+	def __gitGetAddList(this, mList):
+		rList = []
+
+		for st in mList :
+			s = st.encode('utf8')
+			rList.append(s)
+			#print ("--------------" + s)
+
+		return rList
+
+	def __repoModifyDefault(this) :
+		#print (this.repoManifest)
+		this.__changeToDistPathWithParam(this.repoManifest)
+		con = os.listdir("./")
+		print (con)
+		UtilStr.show(con)
+		val = input("which you want to open : ")
+		fileName = con[int(val)]
+		print (fileName)
 
 	def __repoPushLocalBranchToRemote(this):
 		this.__changeToDistPathWithParam(this.repoPath)
