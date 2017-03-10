@@ -33,6 +33,7 @@ class Repo :
 		this.dics["pushLocalBranchToRemote"] = this.__repoPushLocalBranchToRemote
 		this.dics["modifyManifest"] = this.__repoModifyDefault
 		this.dics["gitAdd"] = this.__gitAdd
+		this.dics["gitCommit"] = this.__gitCommit
 
 		this.priv_dics["readFileToGetCurrentBranch"] = this.__readFileToGetCurrentBranch
 		this.priv_dics["getAllBranchToFile"] = this.__repoGetAllBranchToFile
@@ -42,6 +43,11 @@ class Repo :
 		prop.wait()
 		#print (prop.stdout.read())
 		return prop
+
+	def __gitCommit(this):
+		log=raw_input("为提交的代码添加log日志: ")
+		cmdStr = "git commie -m " + log
+		this.__exeInProcessWait(cmdStr)
 
 	def __gitAdd(this):
 		# 改变路径
@@ -62,6 +68,7 @@ class Repo :
 		#sKey = resKey.findall(ss)
 		#keyList = this.__gitGetAddList(sKey)
 
+		## 过滤出所有符合要求的字符串
 		reg = u'[\u2e80-\u9fff]{2,}:[ ]{1,}.*'
 		res = re.compile(reg, re.M)
 		ssl = res.findall(ss)
@@ -74,9 +81,13 @@ class Repo :
 		ssl = res.findall(ss)
 		valList = this.__gitGetAddList(ssl)
 
+		# 通过用户输入,选择需要git add的文件
 		choice = input ("which one you want to add : ")
 		fileName = valList[choice]
-		print ("your choice is : " + fileName)
+		#print ("your choice is : " + fileName)
+
+		cmdStr =  "git add " + fileName
+		this.__exeInProcessWait(cmdStr)
 
 
 	# 显示转码后的字符串列表
