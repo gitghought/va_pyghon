@@ -2,6 +2,7 @@
 import os
 import subprocess
 import sys
+from util_str import UtilStr
 
 class JarInstall :
 	projPath = r"F:\mygithub\uiautotest"
@@ -14,17 +15,28 @@ class JarInstall :
 
 	dics = {}
 	def __init__(this):
-		this.dics["createBuild"] = this.createBuild
-		this.dics["build"] = this.compileFile
-		this.dics["install"] = this.installJar
+		this.dics["createBuild"] = [this.createBuild, "good"]
+		this.dics["compile"] = [this.compileFile, this.projPath]
+		this.dics["install"] = [this.installJar,[" "r"F:\mygithub\uiautotest\bin\uiautotest.jar", "/sdcard/"]]
+
 		this.dics["execute"] = this.execTest
 
-	# ´´½¨ÓÃÓÚ±àÒëµÄbuild.xml
-	def createBuild(this) :
-		#android create uitest-project -n uiautotest -t 19 -p F:\mygithub\uiautotest
-		cmdStr = "android create uitest-project " + " " + " -n " + this.projName + "" + "-t" + this.projTargetID + " " + "-p"  + this.projPath
-		print (cmdStr)
+	# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½build.xml
+	def createBuild(this, param = []) :
+		cmdStr = "android create uitest-project " + " " + " -n " + this.projName + " " + "-t" + " " +this.projTargetID + " " + "-p"  +  " " + this.projPath
+		this.__exeInProcessWaitAndNoshell(cmdStr)
 
+	def __exeInProcessWaitAndNoshell(this, cmdStr):
+			prop = subprocess.Popen(cmdStr, shell = True, stdout = subprocess.PIPE)
+			prop.wait()
+			#print (prop.stdout.read())
+			return prop
+
+	def __exeInProcessWait(this, cmdStr):
+			prop = subprocess.Popen(cmdStr, shell = True, stdout = subprocess.PIPE)
+			prop.wait()
+			#print (prop.stdout.read())
+			return prop
 
 	def compileFile (this, pPath) :
 		os.chdir(pPath)
@@ -33,10 +45,10 @@ class JarInstall :
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
 
-	def installJar (this, fileName, distPath) : 
+	def installJar (this,param = []):
 		os.chdir(this.projPath)
 
-		cmdStr = "adb push " + fileName +  " " + distPath  
+		cmdStr = "adb push " + param[0] +  " " + param[1]  
 		print (cmdStr)
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
@@ -51,7 +63,8 @@ class JarInstall :
 
 if __name__ == "__main__":
 	ji = JarInstall()
-	ji.compileFile(ji.projPath)
-	ji.installJar(ji.fileName, "/sdcard/")
-	ji.execTest()
+#	ji.compileFile(ji.projPath)
+#	ji.installJar(ji.fileName, "/sdcard/")
+#	ji.execTest()
+	UtilStr.operations(ji.dics)
 
