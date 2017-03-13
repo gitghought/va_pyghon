@@ -13,13 +13,18 @@ class JarInstall :
 	projName = "uiautotest"
 	projTargetID = "19"
 
+	# 说明： 字典中存储的是列表，列表第一个元素是待调用的方法，第二个元素仍然是列表，分别存储路径、文件名和参数
+	# 说明：具体格式还需要参考实际使用的命令要求的格式进行填写
 	dics = {}
-	def __init__(this):
-		this.dics["createBuild"] = [this.createBuild, "good"]
-		this.dics["compile"] = [this.compileFile, this.projPath]
-		this.dics["install"] = [this.installJar,[" "r"F:\mygithub\uiautotest\bin\uiautotest.jar", "/sdcard/"]]
 
-		this.dics["execute"] = this.execTest
+	def __init__(this):
+		this.dics["createBuild"] = [this.createBuild, []]
+		this.dics["compile"] = [this.compileFile, [r"F:\mygithub\uiautotest", ]]
+		this.dics["install"] = [this.installJar,[r"F:\mygithub\uiautotest\bin\uiautotest.jar", "/mnt/shell/emulated/"]]
+		this.dics["execute"] = [this.execTest, []]
+		this.dics["executePackage"] = [this.execTestPackage, ["/mnt/shell/emulated/uiautotest.jar", "com.simple.UIAutoTestLauncher"]]
+		this.dics["executePackageCanApp"] = [this.execTestPackage, ["/mnt/shell/emulated/uiautotest.jar", "com.simple.UIAutoTestCanApp"]]
+		#this.dics["executePackageMethod"] = [this.execTestPackage, ["/mnt/shell/emulated/UiAutotestLauncher.jar",]]
 
 	# �������ڱ����build.xml
 	def createBuild(this, param = []) :
@@ -29,17 +34,16 @@ class JarInstall :
 	def __exeInProcessWaitAndNoshell(this, cmdStr):
 			prop = subprocess.Popen(cmdStr, shell = True, stdout = subprocess.PIPE)
 			prop.wait()
-			#print (prop.stdout.read())
 			return prop
 
 	def __exeInProcessWait(this, cmdStr):
 			prop = subprocess.Popen(cmdStr, shell = True, stdout = subprocess.PIPE)
 			prop.wait()
-			#print (prop.stdout.read())
+
 			return prop
 
-	def compileFile (this, pPath) :
-		os.chdir(pPath)
+	def compileFile (this, params = []) :
+		os.chdir(params[0])
 
 		cmdStr = "ant build"
 		prop = subprocess.Popen(cmdStr, shell = True)
@@ -53,18 +57,19 @@ class JarInstall :
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
 
-	def execTest (this) :
-		cmdStr = "adb shell uiautomator runtest" + " " + this.destFile
+	def execTest (this, params = []) :
+		cmdStr = "adb shell uiautomator runtest" + " " + params[0]
+
+		prop = subprocess.Popen(cmdStr, shell = True)
+		prop.wait()
+	def execTestPackage (this, params = []):
+		cmdStr = "adb shell uiautomator runtest" + " " + params[0] + " " +  " -c " + params[1]
+		print (cmdStr)
 
 		prop = subprocess.Popen(cmdStr, shell = True)
 		prop.wait()
 		
-
-
 if __name__ == "__main__":
 	ji = JarInstall()
-#	ji.compileFile(ji.projPath)
-#	ji.installJar(ji.fileName, "/sdcard/")
-#	ji.execTest()
 	UtilStr.operations(ji.dics)
 
