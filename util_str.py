@@ -88,8 +88,14 @@ class UtilStr:
 			UtilStr.showDictitonary(dics)
 			choice = input("you choice is : ")
 			#print (dics[cls.__getPosOfDictionary(dics, choice)]())
-			dics[cls.__getPosOfDictionary(dics, choice)]()
-
+			#dics[cls.__getPosOfDictionary(dics, choice)]()
+			dic = dics[cls.__getPosOfDictionary(dics, choice)]
+			if isinstance(dic, list): 
+				dic[0](dic[1])
+			else :
+				dic()
+				
+				
 if __name__ == "__main__":
 	#UtilStr.split_N("")
 #	UtilStr.show(["vvv", "vvv"])
