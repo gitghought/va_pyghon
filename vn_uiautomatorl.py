@@ -1,19 +1,30 @@
+# -*- coding: utf-8 -*-
 import os
 import subprocess
 import sys
 
 class JarInstall :
-	projPath = r"D:\vv_uiautotest\uiautotest"
-	fileName = r"D:\vv_uiautotest\uiautotest\bin\uiautotest.jar"
+	projPath = r"F:\mygithub\uiautotest"
+	fileName = r"F:\mygithub\uiautotest\bin\uiautotest.jar"
 	destPath = r"/sdcard/"
 	destFile = r"/sdcard/uiautotest.jar"
 
+	projName = "uiautotest"
+	projTargetID = "19"
+
 	dics = {}
 	def __init__(this):
+		this.dics["createBuild"] = this.createBuild
 		this.dics["build"] = this.compileFile
-	
+		this.dics["install"] = this.installJar
+		this.dics["execute"] = this.execTest
+
+	# 创建用于编译的build.xml
 	def createBuild(this) :
-		pass
+		#android create uitest-project -n uiautotest -t 19 -p F:\mygithub\uiautotest
+		cmdStr = "android create uitest-project " + " " + " -n " + this.projName + "" + "-t" + this.projTargetID + " " + "-p"  + this.projPath
+		print (cmdStr)
+
 
 	def compileFile (this, pPath) :
 		os.chdir(pPath)
