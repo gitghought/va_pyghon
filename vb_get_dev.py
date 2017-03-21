@@ -40,16 +40,12 @@ class Dev:
 		pro.wait()
 		devs = self.__getDevsFromFile()
 
-                print (devs)
+# 		print (devs)
 
 		return devs
 
 	def __disconnectAll (self) :
 		cmdStr = "adb disconnect"
-		os.system(cmdStr)
-
-	def connect_nothread (self, ipaddr) :
-		cmdStr = "adb connect " + ipaddr[0]
 		os.system(cmdStr)
 
 	def __connect(this) :
@@ -62,6 +58,8 @@ class Dev:
 	# return string of the ip address include the port
 	# param1:should be a list
 	def connect (self, ipaddr) :
+		cmdStr = "adb connect " + ipaddr[0]
+
 		devs = self.getDevs()
 		if len(devs) > 0 :
 			self.__disconnectAll()
@@ -70,17 +68,22 @@ class Dev:
 			print ("bad command : python <command> <ipaddress>")
 			exit()
 
-		pro = multiprocessing.Process(target=self.connect_nothread, args=(ipaddr,))
-		pro.start()
-		pro.join(2)
-		pro.terminate()
-		pro.join()
+# 		pro = multiprocessing.Process(target=self.connect_nothread, args=(ipaddr,))
+ 		pro = subprocess.Popen(cmdStr, shell = True)
+ 		pro.wait()
 
 		devs = self.getDevs()
-		#print ("defs = " + self.__getIPFromStr(str(devs))[0])
+		print (str(devs))
+		if len(devs) == 0 :
+			print (len(devs))
+			return ""
 
-		return self.__getIPFromStr(str(devs))[0]
-
+		ret  = self.__getIPFromStr(str(devs))
+# 		print (len(ret))
+		if len(ret) == 0:
+			return ""
+		else :
+			return ret[0]
 
 	# para0:should be string
 	def __getIPFromStr(self, ipaddr):
@@ -88,6 +91,7 @@ class Dev:
 		s_ip = re.compile(reg, re.M)
 		ipList = re.findall(reg,ipaddr)
 		return ipList
+
 	def ops(this):
 		UtilStr.operations(this.dics)
 
