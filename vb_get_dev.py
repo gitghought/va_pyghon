@@ -15,8 +15,15 @@ class Dev:
 	devsFile = r"devs.gh"
 
 	dics = {}
+	dicsUI = {}
 	def __init__(this):
+
+		this.dicsUI["connect"] = this.ghconnect
+		this.dicsUI["disconnect"] = this.disconnect
+		this.dicsUI["back"] = this.__back
+
 		this.dics["connect"] = this.__connect
+		this.dics["disconnect"] = this.__disconnectAll
 		this.dics["back"] = this.__back
 
 	def __isWindows(self):
@@ -43,10 +50,39 @@ class Dev:
 # 		print (devs)
 
 		return devs
+	
+	def disconnect(self):
+		self.__disconnectAll()
 
 	def __disconnectAll (self) :
 		cmdStr = "adb disconnect"
 		os.system(cmdStr)
+
+	def  ghconnect(self, ipaddrstr) :
+		cmdStr = "adb connect " + ipaddrstr
+
+		devs = self.getDevs()
+		if len(devs) > 0 :
+			self.__disconnectAll()
+
+# 		pro = multiprocessing.Process(target=self.connect_nothread, args=(ipaddr,))
+ 		pro = subprocess.Popen(cmdStr, shell = True)
+ 		time.sleep(10)
+ 		pro.kill()
+ 		pro.wait()
+
+		devs = self.getDevs()
+		print (str(devs))
+		if len(devs) == 0 :
+			print (len(devs))
+			return ""
+
+		ret  = self.__getIPFromStr(str(devs))
+# 		print (len(ret))
+		if len(ret) == 0:
+			return ""
+		else :
+			return ret[0]
 
 	def __connect(this) :
 		ipaddr = []
