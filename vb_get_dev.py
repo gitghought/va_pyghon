@@ -1,4 +1,5 @@
 #coding=utf-8
+
 from util_str import UtilStr
 import platform
 import os.path
@@ -11,7 +12,7 @@ import re
 import sys
 
 class Dev:
-	devsFile = r".\devs.gh"
+	devsFile = r"devs.gh"
 
 	dics = {}
 	def __init__(this):
@@ -33,11 +34,13 @@ class Dev:
 		return lines
 
 	def getDevs(self):
-		pro = subprocess.Popen("adb devices ", shell = False, stdout = open("devs.gh", 'w'))
+		pro = subprocess.Popen("adb devices ", shell = True, stdout = open("devs.gh", 'w'))
 		time.sleep(2)
 		pro.kill()
 		pro.wait()
 		devs = self.__getDevsFromFile()
+
+                print (devs)
 
 		return devs
 
@@ -52,7 +55,7 @@ class Dev:
 	def __connect(this) :
 		ipaddr = []
 
-		ipaddress = input("enter ip address : ")
+		ipaddress = raw_input("enter ip address : ")
 		ipaddr.append(ipaddress)
 		this.connect(ipaddr)
 
@@ -91,6 +94,7 @@ class Dev:
 
 # just for test
 if __name__ == "__main__" :
-	dev = Dev()
-	dev.ops()
+#	print(os.path.abspath("."))
+ 	dev = Dev()
+ 	dev.ops()
 
