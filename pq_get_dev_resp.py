@@ -39,9 +39,11 @@ class pq_get_dev_resp(QDialog, Ui_Dialog):
             return
         print(os.path.abspath("."))
 
-        ip = self.dev.connect(rIPStr)
+        ip = self.dev.dicsUI["connect"](rIPStr)
         if ip != '':
             self.label_connectstatus.setText("Connectted")
+        else :
+            self.label_connectstatus.setText("未连接，请检查我网络")
     
     @pyqtSignature("")
     def on_btn_disconnect_clicked(self):
