@@ -86,7 +86,7 @@ class UtilStr:
 			if cls.flag :
 				break
 			UtilStr.showDictitonary(dics)
-			choice = input("you choice is : ")
+			choice = raw_input("you choice is : ")
 			#print (dics[cls.__getPosOfDictionary(dics, choice)]())
 			#dics[cls.__getPosOfDictionary(dics, choice)]()
 			dic = dics[cls.__getPosOfDictionary(dics, choice)]
