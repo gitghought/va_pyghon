@@ -65,10 +65,10 @@ class Dev:
 		if len(devs) > 0 :
 			self.__disconnectAll()
 
-# 		pro = multiprocessing.Process(target=self.connect_nothread, args=(ipaddr,))
- 		pro = subprocess.Popen(cmdStr, shell = True)
- 		time.sleep(10)
- 		pro.kill()
+ 		pro = multiprocessing.Process(target=self.connect_nothread, args=(ipaddr,))
+#        pro = subprocess.Popen(cmdStr,shell=True)
+        time.sleep(10)
+        pro.kill()
  		pro.wait()
 
 		devs = self.getDevs()
