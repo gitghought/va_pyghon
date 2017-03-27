@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project UI5_python -->
-<!-- Saved: 2017-03-24, 20:17:49 -->
+<!-- Saved: 2017-03-27, 11:11:49 -->
 <!-- Copyright (C) 2017 ,  -->
 <Project version="5.1">
   <Language></Language>
@@ -13,7 +13,7 @@
   <Email></Email>
   <Eol index="0"/>
   <Sources>
-    <Source>__init__.py</Source>
+    <Source>Ui_DialogPythonGetDev.py</Source>
     <Source>util_str.py</Source>
     <Source>vb_get_dev.py</Source>
     <Source>vc_get_prop.py</Source>
@@ -28,11 +28,14 @@
     <Source>vn_uiautomatorl.py</Source>
     <Source>vo_appium.py</Source>
   </Sources>
-  <Forms/>
+  <Forms>
+    <Form>DialogPythonGetDev.ui</Form>
+  </Forms>
   <Translations/>
   <Resources/>
   <Interfaces/>
   <Others>
+    <Other></Other>
     <Other>.metadata/.plugins/org.python.pydev/pyunit_tests/test_run_pin_info.txt</Other>
     <Other>readme.md</Other>
   </Others>

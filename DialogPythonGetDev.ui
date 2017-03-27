@@ -16,6 +16,61 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
+  <widget class="QPushButton" name="btn_conn">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>190</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>连接</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_disconn">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>190</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>断开</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="le_ip">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>50</y>
+     <width>201</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>60</y>
+     <width>72</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>输入IP</string>
+   </property>
+  </widget>
+  <zorder>btn_conn</zorder>
+  <zorder>btn_disconn</zorder>
+  <zorder>le_ip</zorder>
+  <zorder>label</zorder>
+  <zorder>le_ip</zorder>
+  <zorder>label</zorder>
  </widget>
  <resources/>
  <connections/>
